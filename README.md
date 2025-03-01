@@ -1,8 +1,9 @@
 # SmartResumeAI: AI-Powered Resume Tailoring for Job Success
 
 ## **Framework Overview**
-SmartResumeAI is an intelligent AI agent designed to optimize resumes based on job descriptions, ensuring high ATS (Applicant Tracking System) scores. The system allows users to interactively modify their resumes, leveraging AI-driven insights and job-matching techniques.
-
+- Developed an AI-powered resume optimization assistant leveraging GPT-4-turbo and LangChain for personalized resume modifications based on job descriptions.
+- Implemented a vector-based job matching system using ChromaDB and LangChain VectorDB, enhancing resume relevance through NLP-based keyword alignment.
+- Built an interactive chatbot interface in Streamlit, allowing users to iteratively modify resumes and generate ATS-friendly one-page resumes in PDF/DOCX format.
 ---
 
 ## **1. Features & Workflow**
