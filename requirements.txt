@@ -1,0 +1,35 @@
+# SmartResumeAI Dependencies
+
+# LLM and AI Components
+openai==1.6.1
+langchain==0.1.0
+langchain-openai==0.0.5
+langchain-community==0.0.13
+langchain-chroma==0.0.8
+
+# Vector Database
+chromadb==0.4.22
+
+# NLP and Text Processing
+spacy==3.7.2
+pypdf2==3.0.1
+docx2txt==0.8
+python-docx==1.0.1
+
+# PDF Generation
+reportlab==4.0.8
+pdfkit==1.0.0
+
+# Web Framework
+streamlit==1.29.0
+
+# Database
+sqlalchemy==2.0.23
+
+# Utilities
+python-dotenv==1.0.0
+numpy==1.26.3
+pandas==2.1.4
+
+# Install spaCy English model
+# Run after pip install: python -m spacy download en_core_web_md 

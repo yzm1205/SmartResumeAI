@@ -1,0 +1,65 @@
+JOHN DOE
+Software Engineer
+john.doe@email.com | 555-123-4567 | linkedin.com/in/johndoe | github.com/johndoe
+
+PROFESSIONAL SUMMARY
+Experienced software engineer with 5+ years of expertise in full-stack development, specializing in Python, JavaScript, and cloud technologies. Proven track record of delivering high-quality software solutions and leading technical teams. Passionate about building scalable applications and solving complex problems.
+
+EXPERIENCE
+Senior Software Engineer
+ABC Tech, San Francisco, CA
+January 2020 - Present
+- Architected and developed a microservices-based application that improved system reliability by 40%
+- Led a team of 5 engineers in the implementation of CI/CD pipelines, reducing deployment time by 60%
+- Implemented automated testing frameworks, increasing code coverage from 65% to 90%
+- Optimized database queries, resulting in a 30% improvement in application performance
+
+Software Engineer
+XYZ Solutions, Seattle, WA
+July 2017 - December 2019
+- Developed RESTful APIs using Python and Flask, serving over 1M requests per day
+- Created responsive web interfaces using React.js, improving user engagement by 25%
+- Collaborated with cross-functional teams to deliver features on time and within scope
+- Mentored junior developers and conducted code reviews to ensure code quality
+
+Junior Developer
+TechStart Inc., Portland, OR
+June 2015 - June 2017
+- Assisted in the development of web applications using HTML, CSS, and JavaScript
+- Fixed bugs and implemented small features in the company's main product
+- Participated in Agile development processes, including daily stand-ups and sprint planning
+
+EDUCATION
+Bachelor of Science in Computer Science
+University of Washington, Seattle, WA
+September 2011 - June 2015
+GPA: 3.8/4.0
+
+SKILLS
+- Programming Languages: Python, JavaScript, TypeScript, Java, SQL
+- Frontend Technologies: React, Angular, HTML5, CSS3, SASS
+- Backend Technologies: Node.js, Django, Flask, Express
+- Databases: PostgreSQL, MongoDB, Redis
+- DevOps: Docker, Kubernetes, Jenkins, AWS, GCP
+- Other: RESTful APIs, GraphQL, Microservices, Agile/Scrum
+
+PROJECTS
+E-commerce Platform (2019)
+- Built a full-stack e-commerce platform using MERN stack
+- Implemented secure payment processing and user authentication
+- Deployed on AWS using Docker containers and CI/CD pipelines
+
+Portfolio Website (2018)
+- Created a responsive personal portfolio website using React
+- Implemented a custom CMS for content management
+- Optimized for SEO and performance
+
+CERTIFICATIONS
+- AWS Certified Solutions Architect - Associate (2021)
+- Google Cloud Professional Developer (2020)
+- MongoDB Certified Developer (2019)
+
+ACHIEVEMENTS
+- Speaker at PyCon 2021: "Scaling Python Applications in the Cloud"
+- Open Source Contributor: Contributed to Flask and React Native projects
+- Hackathon Winner: First place at Seattle Code Fest 2019 

@@ -4,6 +4,116 @@
 - Developed an AI-powered resume optimization assistant leveraging GPT-4-turbo and LangChain for personalized resume modifications based on job descriptions.
 - Implemented a vector-based job matching system using ChromaDB and LangChain VectorDB, enhancing resume relevance through NLP-based keyword alignment.
 - Built an interactive chatbot interface in Streamlit, allowing users to iteratively modify resumes and generate ATS-friendly one-page resumes in PDF/DOCX format.
+
+## **Features**
+
+- **AI-Powered Resume Parsing**: Extract structured data from resumes in PDF, DOCX, or TXT formats.
+- **Interactive Resume Chat**: Refine your resume through natural language conversation.
+- **Job Description Analysis**: Extract key requirements and skills from job listings.
+- **Resume Optimization**: Tailor your resume for specific job descriptions.
+- **ATS-Friendly Resume Generation**: Create optimized PDF/DOCX resumes for applicant tracking systems.
+- **Resume Analysis**: Get insights and improvement suggestions for your resume.
+
+## **Installation**
+
+### Prerequisites
+
+- Python 3.9 or higher
+- OpenAI API key
+
+### Setup Instructions
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/yourusername/SmartResumeAI.git
+   cd SmartResumeAI
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Install spaCy model**:
+   ```bash
+   python -m spacy download en_core_web_md
+   ```
+
+4. **Set up environment variables**:
+   Create a `.env` file in the root directory with the following:
+   ```
+   OPENAI_API_KEY=your_openai_api_key_here
+   ```
+
+## **Usage**
+
+1. **Run the application**:
+   ```bash
+   streamlit run main.py
+   ```
+
+2. **Access the web interface**:
+   Open your browser and navigate to `http://localhost:8501`
+
+3. **Upload your resume**:
+   - Navigate to "Resume Upload" in the sidebar
+   - Upload your resume in PDF, DOCX, or TXT format
+   - Or manually enter your resume information
+
+4. **Optimize for job descriptions**:
+   - Go to "Job Matching" in the sidebar
+   - Paste a job description
+   - Analyze the job requirements
+   - Click "Optimize Resume" to tailor your resume for the job
+
+5. **Generate and download your resume**:
+   - Navigate to "Generate Resume" in the sidebar
+   - Preview your optimized resume
+   - Download in PDF or DOCX format
+
+## **Project Structure**
+
+```
+SmartResumeAI/
+├── app/
+│   ├── core/              # Core AI functionality
+│   ├── database/          # Database and vector store modules
+│   ├── frontend/          # Streamlit UI components
+│   ├── pdf_generation/    # PDF and DOCX generation
+│   └── utils/             # Utility functions
+├── data/
+│   ├── sample/            # Sample data for testing
+│   ├── uploads/           # Uploaded resumes
+│   ├── vectordb/          # Vector database storage
+│   └── generated_resumes/ # Generated PDF/DOCX files
+├── main.py                # Main application entry point
+├── requirements.txt       # Project dependencies
+└── .env.example           # Example environment variables
+```
+
+## **Technologies Used**
+
+- **LLM & AI**: OpenAI GPT-4-turbo, LangChain
+- **Vector Database**: ChromaDB
+- **NLP & Text Processing**: spaCy, PyPDF2, docx2txt
+- **PDF/DOCX Generation**: ReportLab, python-docx
+- **Web Framework**: Streamlit
+- **Database**: SQLAlchemy (SQLite)
+
+## **Contributing**
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## **License**
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## **Acknowledgements**
+
+- OpenAI for providing the GPT API
+- The LangChain team for their fantastic framework
+- The Streamlit team for making web app development simple and powerful
+
 ---
 
 ## **1. Features & Workflow**
