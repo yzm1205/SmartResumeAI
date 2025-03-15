@@ -4,6 +4,7 @@ import json
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
+from langchain_community.llms import Ollama
 from app.database.vector_store import search_resume_data, search_job_descriptions
 from app.database.db_manager import get_session, User, Experience, Education, Skill
 
@@ -11,14 +12,88 @@ logger = logging.getLogger(__name__)
 
 # Get model configuration from environment variables
 LLM_MODEL = os.getenv("LLM_MODEL", "gpt-4-turbo")
+MODEL_PROVIDER = os.getenv("MODEL_PROVIDER", "openai")  # 'openai' or 'ollama'
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "mistral")  # Default Ollama model
+OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")  # Default Ollama host
+
+# List of available open source models for Ollama (models under 10B parameters)
+AVAILABLE_OLLAMA_MODELS = [
+    "mistral",  # Mistral 7B
+    "mistral-openorca",  # Mistral 7B tuned on OpenOrca dataset
+    "llama2",  # Llama 2 7B
+    "llama2-uncensored",  # Llama 2 7B uncensored variant
+    "phi",  # Microsoft Phi models (small but powerful)
+    "neural-chat",  # Qualcomm's Neural Chat model
+    "orca-mini",  # Orca mini models
+    "tinyllama",  # Tiny Llama model
+    "gemma",  # Google's Gemma model
+    "stablelm-zephyr",  # StableLM Zephyr model
+    "codellama",  # Code Llama, optimized for code
+]
 
 def get_llm():
-    """Get LLM instance."""
+    """Get LLM instance based on chosen provider."""
     try:
-        return ChatOpenAI(model_name=LLM_MODEL, temperature=0.2)
+        if MODEL_PROVIDER.lower() == "ollama":
+            # Use Ollama for open source models
+            return Ollama(
+                model=OLLAMA_MODEL,
+                base_url=OLLAMA_HOST,
+                temperature=0.2
+            )
+        else:
+            # Use OpenAI by default
+            return ChatOpenAI(model_name=LLM_MODEL, temperature=0.2)
     except Exception as e:
-        logger.error(f"Error initializing LLM: {str(e)}")
+        logger.error(f"Error initializing LLM with provider {MODEL_PROVIDER}: {str(e)}")
         raise
+
+def list_available_models():
+    """
+    List available models for selection.
+    
+    Returns:
+        dict: Dictionary with model providers and their models
+    """
+    return {
+        "openai": ["gpt-3.5-turbo", "gpt-4-turbo"],
+        "ollama": AVAILABLE_OLLAMA_MODELS
+    }
+
+def set_model_provider(provider, model=None):
+    """
+    Set the model provider and optionally the model.
+    
+    Args:
+        provider (str): The provider ('openai' or 'ollama')
+        model (str, optional): The specific model to use
+    
+    Returns:
+        bool: Success status
+    """
+    global MODEL_PROVIDER, LLM_MODEL, OLLAMA_MODEL
+    
+    try:
+        if provider.lower() not in ["openai", "ollama"]:
+            logger.error(f"Invalid model provider: {provider}")
+            return False
+        
+        MODEL_PROVIDER = provider.lower()
+        
+        if model:
+            if MODEL_PROVIDER == "openai":
+                LLM_MODEL = model
+            else:  # ollama
+                OLLAMA_MODEL = model
+        
+        # Test the model connection
+        _ = get_llm()
+        
+        logger.info(f"Set model provider to {MODEL_PROVIDER} with model {model if model else 'default'}")
+        return True
+    except Exception as e:
+        logger.error(f"Error setting model provider: {str(e)}")
+        return False
 
 def parse_resume(resume_text):
     """

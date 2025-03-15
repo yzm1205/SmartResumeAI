@@ -6,6 +6,7 @@ langchain==0.1.0
 langchain-openai==0.0.5
 langchain-community==0.0.13
 langchain-chroma==0.0.8
+ollama==0.1.5  # For open source models
 
 # Vector Database
 chromadb==0.4.22

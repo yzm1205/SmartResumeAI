@@ -6,7 +6,10 @@ from datetime import datetime
 import pandas as pd
 import json
 from app.utils.file_parser import save_uploaded_file, extract_text_from_file
-from app.core.ai_manager import parse_resume, analyze_job_description, optimize_resume_for_job
+from app.core.ai_manager import (
+    parse_resume, analyze_job_description, optimize_resume_for_job,
+    list_available_models, set_model_provider, get_llm
+)
 from app.database.db_manager import get_session, User, Experience, Education, Skill, Certification, Project, Publication, Achievement
 from app.pdf_generation.resume_generator import generate_pdf_resume, generate_docx_resume
 
@@ -27,6 +30,13 @@ def init_session_state():
         st.session_state.job_analysis = {}
     if "optimized_resume" not in st.session_state:
         st.session_state.optimized_resume = {}
+    if "model_provider" not in st.session_state:
+        st.session_state.model_provider = os.getenv("MODEL_PROVIDER", "openai")
+    if "selected_model" not in st.session_state:
+        if st.session_state.model_provider == "openai":
+            st.session_state.selected_model = os.getenv("LLM_MODEL", "gpt-4-turbo")
+        else:
+            st.session_state.selected_model = os.getenv("OLLAMA_MODEL", "mistral")
 
 def render_ui():
     """Render the Streamlit UI."""
@@ -55,7 +65,8 @@ def render_ui():
             "💬 Resume Chat", 
             "🔍 Job Matching", 
             "📊 Resume Analysis",
-            "⬇️ Generate Resume"
+            "⬇️ Generate Resume",
+            "⚙️ Settings"
         ])
         
         # Clear data button
@@ -86,6 +97,8 @@ def render_ui():
         render_resume_analysis_page()
     elif page == "⬇️ Generate Resume":
         render_generate_resume_page()
+    elif page == "⚙️ Settings":
+        render_settings_page()
 
 def render_home_page():
     """Render the home page."""
@@ -115,7 +128,148 @@ def render_home_page():
     ✅ **User-Friendly Interface**: Provides real-time feedback and edits.  
     ✅ **Efficient Job Matching**: Uses NLP to align resumes with job requirements.  
     ✅ **Professional Resume Formatting**: Generates polished, ATS-compatible documents.
+    ✅ **Open-Source Model Support**: Use free, open-source models locally with Ollama.
     """)
+
+    # Display current model info
+    st.info(f"Currently using: **{st.session_state.model_provider.upper()}** model - **{st.session_state.selected_model}**")
+    
+    # If using Ollama, show a note about local installation
+    if st.session_state.model_provider == "ollama":
+        st.warning("""
+        **Note:** You're using Ollama for local model inference. Make sure Ollama is installed and running on your system.
+        
+        To install Ollama, visit [ollama.ai](https://ollama.ai) and follow the installation instructions.
+        After installation, start Ollama and pull your chosen model with: `ollama pull {model_name}`
+        """)
+
+def render_settings_page():
+    """Render the settings page for model selection."""
+    st.header("⚙️ Settings")
+    
+    # Get available models
+    available_models = list_available_models()
+    
+    with st.form("model_settings"):
+        st.subheader("Model Selection")
+        st.markdown("""
+        Choose between OpenAI's API models (requires API key) or free open-source models via Ollama (local inference).
+        
+        **OpenAI models:**
+        - Require an API key and may incur costs
+        - Generally higher quality responses
+        - No local setup required
+        
+        **Ollama models (open-source):**
+        - Completely free to use
+        - Run locally on your computer
+        - Require Ollama installation ([ollama.ai](https://ollama.ai))
+        - Performance depends on your hardware
+        """)
+        
+        # Model provider selection
+        model_provider = st.radio(
+            "Model Provider", 
+            ["openai", "ollama"],
+            index=0 if st.session_state.model_provider == "openai" else 1
+        )
+        
+        # Model selection based on provider
+        if model_provider == "openai":
+            selected_model = st.selectbox(
+                "OpenAI Model", 
+                available_models["openai"],
+                index=available_models["openai"].index(st.session_state.selected_model) 
+                if st.session_state.selected_model in available_models["openai"] else 0
+            )
+            
+            st.text_input(
+                "OpenAI API Key", 
+                value=os.getenv("OPENAI_API_KEY", ""),
+                type="password",
+                key="openai_api_key"
+            )
+            
+        else:  # ollama
+            selected_model = st.selectbox(
+                "Ollama Model", 
+                available_models["ollama"],
+                index=available_models["ollama"].index(st.session_state.selected_model) 
+                if st.session_state.selected_model in available_models["ollama"] else 0
+            )
+            
+            ollama_host = st.text_input(
+                "Ollama Host", 
+                value=os.getenv("OLLAMA_HOST", "http://localhost:11434"),
+                key="ollama_host"
+            )
+            
+            st.markdown("""
+            **Ollama Installation Instructions:**
+            1. Download and install Ollama from [ollama.ai](https://ollama.ai)
+            2. Start Ollama on your system
+            3. Pull your chosen model: `ollama pull {model_name}`
+            """)
+        
+        # Submit button
+        submit_button = st.form_submit_button("Save Settings")
+        
+        if submit_button:
+            try:
+                # Update environment variables and session state
+                os.environ["MODEL_PROVIDER"] = model_provider
+                
+                if model_provider == "openai":
+                    os.environ["LLM_MODEL"] = selected_model
+                    if st.session_state.openai_api_key:
+                        os.environ["OPENAI_API_KEY"] = st.session_state.openai_api_key
+                else:  # ollama
+                    os.environ["OLLAMA_MODEL"] = selected_model
+                    os.environ["OLLAMA_HOST"] = st.session_state.ollama_host
+                
+                # Update session state
+                st.session_state.model_provider = model_provider
+                st.session_state.selected_model = selected_model
+                
+                # Update model in AI manager
+                success = set_model_provider(model_provider, selected_model)
+                
+                if success:
+                    st.success(f"Successfully switched to {model_provider.upper()} model: {selected_model}")
+                    
+                    # Additional message for Ollama users
+                    if model_provider == "ollama":
+                        st.info("""
+                        Make sure Ollama is running and the selected model is installed.
+                        If you haven't pulled the model yet, open a terminal and run:
+                        ```
+                        ollama pull {model_name}
+                        ```
+                        """.format(model_name=selected_model))
+                else:
+                    st.error("Failed to switch model. Please check your settings and try again.")
+            except Exception as e:
+                st.error(f"Error updating model settings: {str(e)}")
+    
+    # Show current model status
+    st.subheader("Current Model Status")
+    
+    try:
+        # Try to get LLM to check if it's working
+        llm = get_llm()
+        st.success(f"✅ Using {st.session_state.model_provider.upper()} model: {st.session_state.selected_model}")
+    except Exception as e:
+        st.error(f"❌ Error connecting to model: {str(e)}")
+        
+        if st.session_state.model_provider == "openai":
+            st.warning("Please check your OpenAI API key.")
+        else:  # ollama
+            st.warning("""
+            Issues with Ollama? Try:
+            1. Make sure Ollama is installed and running
+            2. Check if you've pulled the model with `ollama pull {model_name}`
+            3. Verify the Ollama host address (default: http://localhost:11434)
+            """.format(model_name=st.session_state.selected_model))
 
 def render_resume_upload_page():
     """Render the resume upload page."""

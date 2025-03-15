@@ -4,6 +4,7 @@
 - Developed an AI-powered resume optimization assistant leveraging GPT-4-turbo and LangChain for personalized resume modifications based on job descriptions.
 - Implemented a vector-based job matching system using ChromaDB and LangChain VectorDB, enhancing resume relevance through NLP-based keyword alignment.
 - Built an interactive chatbot interface in Streamlit, allowing users to iteratively modify resumes and generate ATS-friendly one-page resumes in PDF/DOCX format.
+- Supports both OpenAI's API models and free open source models (like Mistral, Llama 2, Phi) via Ollama for local inference.
 
 ## **Features**
 
@@ -13,13 +14,15 @@
 - **Resume Optimization**: Tailor your resume for specific job descriptions.
 - **ATS-Friendly Resume Generation**: Create optimized PDF/DOCX resumes for applicant tracking systems.
 - **Resume Analysis**: Get insights and improvement suggestions for your resume.
+- **Open Source Model Support**: Choose between OpenAI API or free local open source models via Ollama.
 
 ## **Installation**
 
 ### Prerequisites
 
 - Python 3.9 or higher
-- OpenAI API key
+- OpenAI API key (only if using OpenAI models)
+- Ollama (only if using open source models)
 
 ### Setup Instructions
 
@@ -42,7 +45,30 @@
 4. **Set up environment variables**:
    Create a `.env` file in the root directory with the following:
    ```
+   # Choose your model provider
+   MODEL_PROVIDER=openai  # or ollama for open source models
+   
+   # OpenAI configuration (if using OpenAI)
    OPENAI_API_KEY=your_openai_api_key_here
+   LLM_MODEL=gpt-4-turbo
+   
+   # Ollama configuration (if using open source models)
+   OLLAMA_MODEL=mistral  # options: mistral, llama2, phi, neural-chat, etc.
+   OLLAMA_HOST=http://localhost:11434
+   ```
+
+5. **Set up Ollama** (Optional - only for open source models):
+   
+   Install Ollama by following instructions at [ollama.ai](https://ollama.ai)
+   
+   OR run our helper script:
+   ```bash
+   ./setup_ollama.sh
+   ```
+   
+   After installing Ollama, pull your preferred model:
+   ```bash
+   ollama pull mistral  # or llama2, phi, neural-chat, etc.
    ```
 
 ## **Usage**
@@ -55,18 +81,23 @@
 2. **Access the web interface**:
    Open your browser and navigate to `http://localhost:8501`
 
-3. **Upload your resume**:
+3. **Choose your AI model**:
+   - Go to "Settings" in the sidebar to choose between:
+     - **OpenAI models** - Better quality but requires API key and has usage costs
+     - **Open source models** - Free but requires local installation of Ollama
+
+4. **Upload your resume**:
    - Navigate to "Resume Upload" in the sidebar
    - Upload your resume in PDF, DOCX, or TXT format
    - Or manually enter your resume information
 
-4. **Optimize for job descriptions**:
+5. **Optimize for job descriptions**:
    - Go to "Job Matching" in the sidebar
    - Paste a job description
    - Analyze the job requirements
    - Click "Optimize Resume" to tailor your resume for the job
 
-5. **Generate and download your resume**:
+6. **Generate and download your resume**:
    - Navigate to "Generate Resume" in the sidebar
    - Preview your optimized resume
    - Download in PDF or DOCX format
@@ -88,12 +119,35 @@ SmartResumeAI/
 │   └── generated_resumes/ # Generated PDF/DOCX files
 ├── main.py                # Main application entry point
 ├── requirements.txt       # Project dependencies
+├── setup_ollama.sh        # Helper script for Ollama setup
 └── .env.example           # Example environment variables
 ```
 
+## **Open Source Models vs. OpenAI**
+
+SmartResumeAI supports two types of AI models:
+
+### 1. OpenAI Models (Default)
+- **Pros**: Higher quality responses, no local setup, consistent performance
+- **Cons**: Requires API key, incurs usage costs, sends data to OpenAI servers
+- **Models**: GPT-3.5-Turbo, GPT-4-Turbo
+
+### 2. Open Source Models (via Ollama)
+- **Pros**: Completely free, privacy-focused (runs locally), no usage limits
+- **Cons**: Requires local installation, performance depends on hardware, somewhat lower quality
+- **Models**: 
+  - Mistral (7B) - Recommended for best balance
+  - Llama 2 (7B) - Meta's open source model
+  - Phi - Microsoft's small but capable model
+  - Neural-chat - Qualcomm's conversational model
+  - Gemma - Google's Gemma model
+  - And more...
+
+To switch between model types, go to "Settings" in the app sidebar.
+
 ## **Technologies Used**
 
-- **LLM & AI**: OpenAI GPT-4-turbo, LangChain
+- **LLM & AI**: OpenAI GPT-4-turbo, Ollama (open source models), LangChain
 - **Vector Database**: ChromaDB
 - **NLP & Text Processing**: spaCy, PyPDF2, docx2txt
 - **PDF/DOCX Generation**: ReportLab, python-docx
@@ -113,6 +167,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - OpenAI for providing the GPT API
 - The LangChain team for their fantastic framework
 - The Streamlit team for making web app development simple and powerful
+- The Ollama project for making open source models accessible
 
 ---
 
